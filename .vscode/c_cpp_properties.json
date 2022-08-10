@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "name": "GCC32",
+            "includePath": [
+                "${workspaceFolder}\\src",
+                "${workspaceFolder}/**"
+            ],
+            "browse": {
+                "path": [
+                    "${workspaceRoot}"
+                ]
+            },
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "forcedInclude": [],
+            "windowsSdkVersion": "8.1",
+            "compilerPath": "C:/TDM-GCC-32/bin/gcc.exe",
+            "cStandard": "c99",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64",
+            "configurationProvider": "GNU"
+        }       
+    ],
+    "version": 4
+}

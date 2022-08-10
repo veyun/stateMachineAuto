@@ -22,6 +22,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <time.h>
 #include "stateMachine.h"
 
 /* This simple example checks keyboad input against the two allowed strings
@@ -164,6 +165,7 @@ int main()
    stateM_init( &m, &idleState, &errorState );
 
    int ch;
+   printf( "Entry main %c 2022-08-10\n", "Michael.Wei");
    while ( ( ch = getc( stdin ) ) != EOF )
       stateM_handleEvent( &m, &(struct event){ Event_keyboard,
             (void *)(intptr_t)ch } );
@@ -173,9 +175,13 @@ int main()
 
 static bool compareKeyboardChar( void *ch, struct event *event )
 {
+   struct tm *tp;
+   time_t t;
+
    if ( event->type != Event_keyboard )
       return false;
-
+   tp=localtime(&t);
+   printf( "Entry compareKeyboardChar: %d\n", tp->tm_sec);
    return (intptr_t)ch == (intptr_t)event->data;
 }
 

@@ -1,7 +1,7 @@
-default: clean dist run
+default:clean dist run
 
 dist:
-	mkdir bin/
+	mkdir bin
 	gcc -std=c99 -I src src/stateMachine.c examples/stateMachineExample.c  -o bin/example
 	
 run:
