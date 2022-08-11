@@ -165,7 +165,7 @@ int main()
    stateM_init( &m, &idleState, &errorState );
 
    int ch;
-   printf( "Entry Main %c 2022-08-11\n", "MW");
+   printf( "Entry Main %c2022-08-11\n", "MW");
    while ( ( ch = getc( stdin ) ) != EOF )
       stateM_handleEvent( &m, &(struct event){ Event_keyboard,
             (void *)(intptr_t)ch } );

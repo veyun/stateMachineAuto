@@ -10,10 +10,10 @@
             "request": "launch",
             "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
             "args": [],
-            "stopAtEntry": false,
+            "stopAtEntry": true,
             "cwd": "${fileDirname}",
             "environment": [],
-            "externalConsole": true,
+            "externalConsole": false,
             "MIMode": "gdb",
             "miDebuggerPath":"C:/msys64/mingw64/bin/gdb.exe",
             "setupCommands": [
