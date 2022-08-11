@@ -3,5 +3,18 @@
         {
             "path": "."
         }
-    ]
+    ],
+    "settings": {
+        "makefile.launchConfigurations": [
+            {
+                "cwd": "c:\\wkspaces\\16218222_80_FBLTesting\\StateMachineAuto\\VsRepository\\stateMachineAuto\\bin",
+                "binaryPath": "c:\\wkspaces\\16218222_80_FBLTesting\\StateMachineAuto\\VsRepository\\stateMachineAuto\\bin\\example",
+                "binaryArgs": []
+            }
+        ],
+        "files.associations": {
+            "statemachine.h": "c",
+            "time.h": "c"
+        }
+    }
 }

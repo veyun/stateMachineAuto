@@ -165,7 +165,7 @@ int main()
    stateM_init( &m, &idleState, &errorState );
 
    int ch;
-   printf( "Entry main %c 2022-08-10\n", "Michael.Wei");
+   printf( "Entry Main %c 2022-08-11\n", "MW");
    while ( ( ch = getc( stdin ) ) != EOF )
       stateM_handleEvent( &m, &(struct event){ Event_keyboard,
             (void *)(intptr_t)ch } );
@@ -181,7 +181,10 @@ static bool compareKeyboardChar( void *ch, struct event *event )
    if ( event->type != Event_keyboard )
       return false;
    tp=localtime(&t);
-   printf( "Entry compareKeyboardChar: %d\n", tp->tm_sec);
+   if(tp!=NULL)
+   {
+      printf( "Entry compareKeyboardChar: %d\n", tp->tm_sec);
+   }
    return (intptr_t)ch == (intptr_t)event->data;
 }
 
