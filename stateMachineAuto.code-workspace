@@ -15,6 +15,9 @@
         "files.associations": {
             "statemachine.h": "c",
             "time.h": "c"
-        }
+        },
+        "git-graph.dialog.addTag.type": "Lightweight",
+        "git-graph.dialog.applyStash.reinstateIndex": true,
+        "git-graph.graph.style": "angular"
     }
 }

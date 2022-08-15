@@ -19,7 +19,6 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-
 #include <stdint.h>
 #include <stdio.h>
 #include <time.h>
@@ -53,26 +52,19 @@
  */
 
 /* Types of events */
-enum eventType {
-   Event_keyboard,
-};
+enum eventType { Event_keyboard, };
 
 /* Compare keyboard character from transition's condition variable against
  * data in event. */
-static bool compareKeyboardChar( void *ch, struct event *event );
-
-static void printRecognisedChar( void *stateData, struct event *event );
-static void printUnrecognisedChar( void *oldStateData, struct event *event,
-      void *newStateData );
-static void printReset( void *oldStateData, struct event *event,
-      void *newStateData );
-static void printHiMsg( void *oldStateData, struct event *event,
-      void *newStateData );
-static void printHaMsg( void *oldStateData, struct event *event,
-      void *newStateData );
-static void printErrMsg( void *stateData, struct event *event );
-static void printEnterMsg( void *stateData, struct event *event );
-static void printExitMsg( void *stateData, struct event *event );
+static bool compareKeyboardChar(void *ch, struct event *event);
+static void printRecognisedChar(void *stateData, struct event *event);
+static void printUnrecognisedChar(void *oldStateData, struct event *event, void *newStateData);
+static void printReset(void *oldStateData, struct event *event, void *newStateData);
+static void printHiMsg(void *oldStateData, struct event *event, void *newStateData);
+static void printHaMsg(void *oldStateData, struct event *event, void *newStateData);
+static void printErrMsg(void *stateData, struct event *event);
+static void printEnterMsg(void *stateData, struct event *event);
+static void printExitMsg(void *stateData, struct event *event);
 
 /* Forward declaration of states so that they can be defined in an logical
  * order: */
@@ -82,154 +74,240 @@ static struct state checkCharsGroupState, idleState, hState, iState, aState;
  * group state. This way, any unrecognised character will be handled by this
  * state's transition, eliminating the need for adding the same transition to
  * all the children states. */
-static struct state checkCharsGroupState = {
-   .parentState = NULL,
-   /* The entry state is defined in order to demontrate that the 'reset'
+static struct state checkCharsGroupState =
+{
+    .parentState = NULL,
+
+    /* The entry state is defined in order to demontrate that the 'reset'
     * transtition, going to this group state, will be 'redirected' to the
     * 'idle' state (the transition could of course go directly to the 'idle'
     * state): */
-   .entryState = &idleState,
-   .transitions = (struct transition[]){
-      { Event_keyboard, (void *)(intptr_t)'!', &compareKeyboardChar,
-         &printReset, &idleState, },
-      { Event_keyboard, NULL, NULL, &printUnrecognisedChar, &idleState, },
-   },
-   .numTransitions = 2,
-   .data = "group",
-   .entryAction = &printEnterMsg,
-   .exitAction = &printExitMsg,
+    .entryState = &idleState,
+    .transitions = (struct transition[])
+    { { Event_keyboard, (void *) (intptr_t) '!', &compareKeyboardChar, &printReset, &idleState, },
+        { Event_keyboard, NULL, NULL, &printUnrecognisedChar, &idleState },
+    },
+    .numTransitions = 2,
+    .data = "group",
+    .entryAction = &printEnterMsg,
+    .exitAction = &printExitMsg,
 };
-
-static struct state idleState = {
-   .parentState = &checkCharsGroupState,
-   .entryState = NULL,
-   .transitions = (struct transition[]){
-      { Event_keyboard, (void *)(intptr_t)'h', &compareKeyboardChar, NULL,
-         &hState },
-   },
-   .numTransitions = 1,
-   .data = "idle",
-   .entryAction = &printEnterMsg,
-   .exitAction = &printExitMsg,
+static struct state idleState =
+{
+    .parentState = &checkCharsGroupState,
+    .entryState = NULL,
+    .transitions = (struct transition[])
+    { { Event_keyboard, (void *) (intptr_t) 'h', &compareKeyboardChar, NULL, &hState },
+    },
+    .numTransitions = 1,
+    .data = "idle",
+    .entryAction = &printEnterMsg,
+    .exitAction = &printExitMsg,
 };
-
-static struct state hState = {
-   .parentState = &checkCharsGroupState,
-   .entryState = NULL,
-   .transitions = (struct transition[]){
-      { Event_keyboard, (void *)(intptr_t)'a', &compareKeyboardChar, NULL,
-         &aState },
-      { Event_keyboard, (void *)(intptr_t)'i', &compareKeyboardChar, NULL,
-         &iState },
-   },
-   .numTransitions = 2,
-   .data = "H",
-   .entryAction = &printRecognisedChar,
-   .exitAction = &printExitMsg,
+static struct state hState =
+{
+    .parentState = &checkCharsGroupState,
+    .entryState = NULL,
+    .transitions = (struct transition[])
+    {
+        /*{ Event_keyboard, (void *)(intptr_t)'h', &compareKeyboardChar, &printRecognisedChar, &hState },*/
+        { Event_keyboard, (void *) (intptr_t) 'a', &compareKeyboardChar, NULL, &aState },
+        { Event_keyboard, (void *) (intptr_t) 'i', &compareKeyboardChar, NULL, &iState },
+    },
+    .numTransitions = 2,
+    .data = "H",
+    .entryAction = &printRecognisedChar,
+    .exitAction = &printExitMsg,
 };
-
-static struct state iState = {
-   .parentState = &checkCharsGroupState,
-   .entryState = NULL,
-   .transitions = (struct transition[]){
-      { Event_keyboard, (void *)(intptr_t)'\n', &compareKeyboardChar,
-         &printHiMsg, &idleState }
-   },
-   .numTransitions = 1,
-   .data = "I",
-   .entryAction = &printRecognisedChar,
-   .exitAction = &printExitMsg,
+static struct state iState =
+{
+    .parentState = &checkCharsGroupState,
+    .entryState = NULL,
+    .transitions = (struct transition[])
+    { { Event_keyboard, (void *) (intptr_t) '\n', &compareKeyboardChar, &printHiMsg, &iState }
+    },
+    .numTransitions = 1,
+    .data = "I",
+    .entryAction = &printRecognisedChar,
+    .exitAction = &printExitMsg,
 };
-
-static struct state aState = {
-   .parentState = &checkCharsGroupState,
-   .entryState = NULL,
-   .transitions = (struct transition[]){
-      { Event_keyboard, (void *)(intptr_t)'\n', &compareKeyboardChar,
-         &printHaMsg, &idleState }
-   },
-   .numTransitions = 1,
-   .data = "A",
-   .entryAction = &printRecognisedChar,
-   .exitAction = &printExitMsg
+static struct state aState =
+{
+    .parentState = &checkCharsGroupState,
+    .entryState = NULL,
+    .transitions = (struct transition[])
+    { { Event_keyboard, (void *) (intptr_t) '\n', &compareKeyboardChar, &printHaMsg, &idleState }
+    },
+    .numTransitions = 1,
+    .data = "A",
+    .entryAction = &printRecognisedChar,
+    .exitAction = &printExitMsg
 };
-
-static struct state errorState = {
-   .entryAction = &printErrMsg
-};
+static struct state errorState = { .entryAction = &printErrMsg };
 
 
+/**
+* @brief  FunctionName:   
+*         @note: Please replace this comments!!!
+* @param  input:  void
+* @param  output: void
+* @retval return value
+*/
 int main()
 {
-   struct stateMachine m;
-   stateM_init( &m, &idleState, &errorState );
+    struct stateMachine m;
+    int                 count = 0;
+    int                 ch;
+    stateM_init(&m, &idleState, &errorState);
+    printf(">>>>>>>>>>Modify:%s,CurrentState:%s<<<<<<<<<<\n", "M.W.", m.currentState->data);
+    while(1)
+    {
+        //
+        ch = getc(stdin);
+        count = stateM_handleEvent(&m, &(struct event)
+		    {
+		        Event_keyboard, (void *) (intptr_t) ch
+		    }
+        );
+        printf(">>>>>>>>>>ChangeMode:%d,CurrentState:%s<<<<<<<<<<\n", count, m.currentState->data);
+    }
 
-   int ch;
-   printf( "Entry Main %c2022-08-11\n", "MW");
-   while ( ( ch = getc( stdin ) ) != EOF )
-      stateM_handleEvent( &m, &(struct event){ Event_keyboard,
-            (void *)(intptr_t)ch } );
-
-   return 0;
+    return(0);
 }
 
-static bool compareKeyboardChar( void *ch, struct event *event )
-{
-   struct tm *tp;
-   time_t t;
 
-   if ( event->type != Event_keyboard )
-      return false;
-   tp=localtime(&t);
-   if(tp!=NULL)
-   {
-      printf( "Entry compareKeyboardChar: %d\n", tp->tm_sec);
-   }
-   return (intptr_t)ch == (intptr_t)event->data;
+/**
+* @brief  FunctionName:   
+*         @note: Please replace this comments!!!
+* @param  input:  void
+* @param  output: void
+* @retval return value
+*/
+static bool compareKeyboardChar(void *ch, struct event *event)
+{
+    time_t  t;
+    if(event->type != Event_keyboard)
+    {
+        return(false);
+    }
+
+    t = time(NULL);
+    if(t != 0)
+    {
+        //printf( "Entry compareKeyboardChar: %f\n", (float)(t/3600));
+    }
+
+    return(intptr_t) ch == (intptr_t) event->data;
 }
 
-static void printRecognisedChar( void *stateData, struct event *event )
+
+/**
+* @brief  FunctionName:   
+*         @note: Please replace this comments!!!
+* @param  input:  void
+* @param  output: void
+* @retval return value
+*/
+static void printRecognisedChar(void *stateData, struct event *event)
 {
-   printEnterMsg( stateData, event );
-   printf( "parsed: %c\n", (char)(intptr_t)event->data );
+    printEnterMsg(stateData, event);
+    printf("parsed: %c\n", (char) (intptr_t) event->data);
 }
 
-static void printUnrecognisedChar( void *oldStateData, struct event *event,
-      void *newStateData )
+
+/**
+* @brief  FunctionName:   
+*         @note: Please replace this comments!!!
+* @param  input:  void
+* @param  output: void
+* @retval return value
+*/
+static void printUnrecognisedChar(void *oldStateData, struct event *event, void *newStateData)
 {
-   printf( "unrecognised character: %c\n",
-         (char)(intptr_t)event->data );
+    if((char) (intptr_t) event->data != '\n')
+    {
+        printf("unrecognised character: %c\n", (char) (intptr_t) event->data);
+    }
+    else
+    {
+        printf("The last char:\\n\n");
+    }
 }
 
-static void printReset( void *oldStateData, struct event *event,
-      void *newStateData )
+
+/**
+* @brief  FunctionName:   
+*         @note: Please replace this comments!!!
+* @param  input:  void
+* @param  output: void
+* @retval return value
+*/
+static void printReset(void *oldStateData, struct event *event, void *newStateData)
 {
-   puts( "Resetting" );
+    puts("Resetting:");
 }
 
-static void printHiMsg( void *oldStateData, struct event *event,
-      void *newStateData )
+
+/**
+* @brief  FunctionName:   
+*         @note: Please replace this comments!!!
+* @param  input:  void
+* @param  output: void
+* @retval return value
+*/
+static void printHiMsg(void *oldStateData, struct event *event, void *newStateData)
 {
-   puts( "Hi!" );
+    puts("Hi!");
 }
 
-static void printHaMsg( void *oldStateData, struct event *event,
-      void *newStateData )
+
+/**
+* @brief  FunctionName:   
+*         @note: Please replace this comments!!!
+* @param  input:  void
+* @param  output: void
+* @retval return value
+*/
+static void printHaMsg(void *oldStateData, struct event *event, void *newStateData)
 {
-   puts( "Ha-ha" );
+    puts("Ha-ha");
 }
 
-static void printErrMsg( void *stateData, struct event *event )
+
+/**
+* @brief  FunctionName:   
+*         @note: Please replace this comments!!!
+* @param  input:  void
+* @param  output: void
+* @retval return value
+*/
+static void printErrMsg(void *stateData, struct event *event)
 {
-   puts( "ENTERED ERROR STATE!" );
+    printf("ENTERED ERROR STATE(%s)!!\n", (char *) stateData);
 }
 
-static void printEnterMsg( void *stateData, struct event *event )
+
+/**
+* @brief  FunctionName:   
+*         @note: Please replace this comments!!!
+* @param  input:  void
+* @param  output: void
+* @retval return value
+*/
+static void printEnterMsg(void *stateData, struct event *event)
 {
-   printf( "Entering %s state\n", (char *)stateData );
+    printf("Entering %s state\n", (char *) stateData);
 }
 
-static void printExitMsg( void *stateData, struct event *event )
+
+/**
+* @brief  FunctionName:   
+*         @note: Please replace this comments!!!
+* @param  input:  void
+* @param  output: void
+* @retval return value
+*/
+static void printExitMsg(void *stateData, struct event *event)
 {
-   printf( "Exiting %s state\n", (char *)stateData );
+    printf("Exiting %s state\n", (char *) stateData);
 }
