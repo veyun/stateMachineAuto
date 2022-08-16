@@ -22,7 +22,13 @@
             ],
             "group": "build",
             "detail": "compiler: C:/msys64/mingw64/bin/gcc.exe"
-        },        
+        },   
+        {
+            "label": "Goback",
+            "type": "shell",
+            "command": "YOUR COMMAND HERE",
+            "presentation": {"echo": true, "reveal": "always", "focus": false, "panel": "shared", "showReuseMessage": false, "clear": true},
+        },
     ],
     "version": "2.0.0"
 }

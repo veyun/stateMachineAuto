@@ -289,6 +289,7 @@ static void exitAction( void *stateData, struct event *event )
    const char *stateName = (const char *)stateData;
 
    printf( "Exiting %s\n", stateName );
+   printf( "============================\n");
 }
 
 static void transAction( void *oldStateData, struct event *event,

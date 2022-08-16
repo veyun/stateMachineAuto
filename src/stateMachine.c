@@ -21,7 +21,11 @@
  */
 
 #include "stateMachine.h"
-
+#ifndef DEBUG
+   #define DEBUG       "(Debug)"
+   #include "stdio.h"
+#endif
+int Docount;
 static void goToErrorState( struct stateMachine *stateMachine,
       struct event *const event );
 static struct transition *getTransition( struct stateMachine *stateMachine,
@@ -52,17 +56,19 @@ int stateM_handleEvent( struct stateMachine *fsm,
 
    if ( !fsm->currentState->numTransitions )
       return stateM_noStateChange;
-
+   Docount=0;
    struct state *nextState = fsm->currentState;
    do {
       struct transition *transition = getTransition( fsm, nextState, event );
-
+      Docount++;
       /* If there were no transitions for the given event for the current
        * state, check if there are any transitions for any of the parent
        * states (if any): */
       if ( !transition )
-      {
-         nextState = nextState->parentState;
+      {     
+         printf("%s_%d action.exit state:%s,",DEBUG,Docount,nextState->data);   
+         nextState = nextState->parentState; 
+         printf("to parent state:%s!\n",nextState->data);
          continue;
       }
 
@@ -71,6 +77,7 @@ int stateM_handleEvent( struct stateMachine *fsm,
       if ( !transition->nextState )
       {
          goToErrorState( fsm, event );
+         printf("%sDon`t define the next state!\n",DEBUG);
          return stateM_errorStateReached;
       }
 
@@ -80,7 +87,10 @@ int stateM_handleEvent( struct stateMachine *fsm,
        * one). Step down through the whole family tree until a state without
        * an entry state is found: */
       while ( nextState->entryState )
-         nextState = nextState->entryState;
+      {
+         printf("%sEntry State:%s!\n",DEBUG,nextState->entryState->data);      
+         nextState = nextState->entryState;         
+      }
 
       /* Run exit action only if the current state is left (only if it does
        * not return to itself): */
