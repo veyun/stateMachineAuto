@@ -78,14 +78,14 @@ static struct state checkCharsGroupState =
 {
     .parentState = NULL,
 
-    /* The entry state is defined in order to demontrate that the 'reset'
+    /* The entry state is defined in order to demonstrate that the 'reset'
     * transtition, going to this group state, will be 'redirected' to the
     * 'idle' state (the transition could of course go directly to the 'idle'
     * state): */
-    .entryState = &idleState,
+    .entryState = NULL,//&idleState,
     .transitions = (struct transition[])
     { { Event_keyboard, (void *) (intptr_t) '!', &compareKeyboardChar, &printReset, &idleState, },
-        { Event_keyboard, NULL, NULL, &printUnrecognisedChar, &idleState },
+        { Event_keyboard, NULL, NULL, &printUnrecognisedChar, &checkCharsGroupState },
     },
     .numTransitions = 2,
     .data = "group",
@@ -159,7 +159,7 @@ int main()
     int                 count = 0;
     int                 ch;
     stateM_init(&m, &idleState, &errorState);
-    printf(">>>>>>>>>>Modify:%s,CurrentState:%s<<<<<<<<<<\n", "M.W.", m.currentState->data);
+    printf(">>>>>>>>>>Modify:%s,CurrentState:%s<<<<<<<<<<\n", "M.W.20220815", m.currentState->data);
     while(1)
     {
         //
@@ -169,7 +169,7 @@ int main()
 		        Event_keyboard, (void *) (intptr_t) ch
 		    }
         );
-        printf(">>>>>>>>>>ChangeMode:%d,CurrentState:%s<<<<<<<<<<\n", count, m.currentState->data);
+        printf("=======>ChangeMode:%d,CurrentState:%s<=======\n", count, m.currentState->data);
     }
 
     return(0);
